@@ -17,7 +17,8 @@ def make_slcdf_withlight(f):
 def make_pandora_df_withlight(f, trkScoreCut=False, trkDistCut=50., cutClearCosmic=False, requireFiducial=False, updatecalo=False, **trkArgs):
     # load
     trkdf = make_trkdf(f, trkScoreCut, **trkArgs)
-    if updatecalo:
+
+    if (updatecalo == True):
         # check detector
         det = loadbranches(f["recTree"], ["rec.hdr.det"]).rec.hdr.det
         if (1 == det.unique()):
@@ -69,5 +70,5 @@ def make_pandora_df_withlight(f, trkScoreCut=False, trkDistCut=50., cutClearCosm
     return slcdf
 
 def make_pandora_df_nc1p(f):
-    pandoradf = make_pandora_df_withlight(f, cutClearCosmic=True)
+    pandoradf = make_pandora_df_withlight(f, cutClearCosmic=True, updatecalo=True)
     return pandoradf
