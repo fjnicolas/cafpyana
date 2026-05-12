@@ -94,6 +94,7 @@ trueparticlenames = [
     "parent",
     "cont_tpc",
     "genE",
+    "genT",
     "interaction_id",
     "crosses_tpc",
 ]
@@ -301,6 +302,8 @@ correctedflashbranches = [
     "rec.slc.correctedOpFlash.OpFlashT0Corrected",
 ]
 
+slcbrancheswithlight = slcbranches + barycenterFMbranches + correctedflashbranches
+
 mcbranches = [
     "rec.mc.nu.E",
     "rec.mc.nu.baseline",
@@ -321,10 +324,17 @@ mcbranches = [
     "rec.mc.nu.parent_pdg",
     "rec.mc.nu.parent_dcy_E",
     "rec.mc.nu.genie_evtrec_idx",
+    "rec.mc.nu.nneutron",
+    "rec.mc.nu.nproton",
+    "rec.mc.nu.nprim",
+    "rec.mc.nu.npiplus",
+    "rec.mc.nu.npiminus",
+    "rec.mc.nu.npizero"
 ]
 
 mcprimbranches = [
     "rec.mc.nu.prim.genE",
+    "rec.mc.nu.prim.genT",
     "rec.mc.nu.prim.length",
     "rec.mc.nu.prim.pdg",
     "rec.mc.nu.prim.genp.x",
@@ -410,6 +420,7 @@ stubbranches = [
 
     "rec.slc.reco.stub.truth.p.pdg",
     "rec.slc.reco.stub.truth.p.genE",
+    "rec.slc.reco.stub.truth.p.genT",
     "rec.slc.reco.stub.truth.p.interaction_id",
 ]
 

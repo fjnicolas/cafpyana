@@ -96,6 +96,9 @@ def make_mcnuwgtdf(f):
 def make_mcnuwgtdf_slim(f):
     return make_mcnudf(f, include_weights=True, multisim_nuniv=100, slim=True)
 
+def make_sbndtimingdf(f):
+    return  loadbranches(f["recTree"], sbndtimingbranches).rec
+    
 # TODO: zip the nuniv configs
 def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nuniv=100, wgt_types=["bnb","genie","g4"], slim=False, genie_systematics=None):
     # ----- sbnd or icarus? -----
