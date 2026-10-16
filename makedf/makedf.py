@@ -108,7 +108,7 @@ def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nun
     else:
         det = "ICARUS"
 
-    mcdf = make_mcdf(f)
+    mcdf = make_mcdf(f, savePrimariesG4IDs=True)
     mcdf["ind"] = mcdf.index.get_level_values(1)
     if include_weights:
         if len(wgt_types) == 0:
@@ -219,6 +219,15 @@ def make_crthitdf(f):
 
 def make_opflashdf(f):
     opflashdf = loadbranches(f["recTree"], opflashbranches).rec.opflashes
+    return opflashdf
+
+
+def make_beamopflash_df(f):
+    opflashdf = loadbranches(f["recTree"], opflashbranches).rec.opflashes
+
+    ## Filter to only beam flashes in the beam window [-5, 10] us based on the branch rec.opflashes.time
+    opflashdf = opflashdf[(opflashdf.time > -5) & (opflashdf.time < 10)]
+
     return opflashdf
 
 def make_trkdf(f, scoreCut=False, requiret0=False, requireCosmic=False, mcs=False, det="SBND", updatecalo=None):
@@ -370,7 +379,7 @@ def make_slcdf(f):
 
     return slcdf
 
-def make_mcdf(f, branches=mcbranches, primbranches=mcprimbranches):
+def make_mcdf(f, branches=mcbranches, primbranches=mcprimbranches, savePrimariesG4IDs=False):
     # load the df
     mcdf = loadbranches(f["recTree"], branches)
     while mcdf.columns.nlevels > 2:
@@ -382,6 +391,7 @@ def make_mcdf(f, branches=mcbranches, primbranches=mcprimbranches):
         mcprimdf.columns = mcprimdf.columns.droplevel(0)
 
     mcprimdf.index = mcprimdf.index.rename(mcdf.index.names[:2] + mcprimdf.index.names[2:])
+    
 
     max_proton_KE = mcprimdf[np.abs(mcprimdf.pdg)==PDG["proton"][0]].genE.groupby(level=[0,1]).max() - PDG["proton"][2]
     mcdf = multicol_add(mcdf, max_proton_KE.rename("max_proton_ke"), default=0.)
@@ -435,6 +445,18 @@ def make_mcdf(f, branches=mcbranches, primbranches=mcprimbranches):
     mcdf.loc[:, ('p','dir','x')] = mcdf.p.genp.x/mcdf.p.totp
     mcdf.loc[:, ('p','dir','y')] = mcdf.p.genp.y/mcdf.p.totp
     mcdf.loc[:, ('p','dir','z')] = mcdf.p.genp.z/mcdf.p.totp
+
+    ## Primaries dataframe has multiple levels per mcnu (each of the primary particles)
+    ## Add all the primary sub-dataframes to the mcnu dataframe
+    ## in the style of ('prim', 'genE', '') , ('prim', 'pdg', ''), etc.
+    if savePrimariesG4IDs:
+        mcprimdf_toadd = mcprimdf.copy()
+        ## Keep only the relevant columns for the primaries dataframe
+        mcprimdf_toadd = mcprimdf_toadd[['pdg', 'genE', 'G4ID']]
+        mcprimdf_toadd.columns = pd.MultiIndex.from_tuples([tuple(["prim"] + list(c)) for c in mcprimdf_toadd.columns])
+        mcdf = multicol_merge(mcdf, mcprimdf_toadd, left_index=True, right_index=True, how="left", validate="one_to_many")
+
+        
 
     return mcdf
 
@@ -960,3 +982,27 @@ def make_spine_flash_df(f):
     spine_flash_df = reduce(lambda l, r: l.join(r, how='outer'), dfs)
 
     return spine_flash_df
+
+def make_blipdf(f):
+    blipinfodf = loadbranches(f["recTree"], blipbranches)
+    blipclusterinfodf = loadbranches(f["recTree"], blipclusterbranches)
+    trueblipinfodf = loadbranches(f["recTree"], trueblipbranches)
+    fullblipdf = multicol_merge(blipinfodf, blipclusterinfodf, left_index=True, right_index=True, how="left", validate="one_to_one")
+    fullblipdf = multicol_merge(fullblipdf, trueblipinfodf, left_index=True, right_index=True, how="left", validate="one_to_one")
+    
+    return fullblipdf 
+
+def make_alltrueparticlesdf(f):
+    truepartdf = loadbranches(f["recTree"], trueparticlebranches)
+    truepartdf = truepartdf.rec.true_particles
+    return truepartdf
+
+
+def make_stubdf(f):
+    stubdf = loadbranches(f["recTree"], stubbranches)
+    stubplanedf = loadbranches(f["recTree"], stubplanebranches)
+    stubhitdf = loadbranches(f["recTree"], stubhitbranches)
+    stubdf = multicol_merge(stubdf, stubplanedf, left_index=True, right_index=True, how="left", validate="one_to_many")
+    stubdf = multicol_merge(stubdf, stubhitdf, left_index=True, right_index=True, how="left", validate="one_to_many")
+    return stubdf
+

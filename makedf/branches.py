@@ -44,6 +44,13 @@ opflashbranches = [
     "rec.opflashes.firsttime",
     "rec.opflashes.time",
     "rec.opflashes.totalpe",
+    "rec.opflashes.tpc",
+    "rec.opflashes.center.x",
+    "rec.opflashes.center.y",
+    "rec.opflashes.center.z",
+    "rec.opflashes.width.x",
+    "rec.opflashes.width.y",
+    "rec.opflashes.width.z",
 ]
 
 numipotbranches = [
@@ -88,6 +95,7 @@ trueparticlenames = [
     "endE",
     "start.x", "start.y", "start.z",
     "end.x", "end.y", "end.z",
+    "gen.x", "gen.y", "gen.z",
     "genp.x", "genp.y", "genp.z",
     "length",
     "G4ID",
@@ -305,6 +313,7 @@ correctedflashbranches = [
 slcbrancheswithlight = slcbranches + barycenterFMbranches + correctedflashbranches
 
 mcbranches = [
+    "rec.mc.nu.index",
     "rec.mc.nu.E",
     "rec.mc.nu.baseline",
     "rec.mc.nu.time",
@@ -329,12 +338,13 @@ mcbranches = [
     "rec.mc.nu.nprim",
     "rec.mc.nu.npiplus",
     "rec.mc.nu.npiminus",
-    "rec.mc.nu.npizero"
+    "rec.mc.nu.npizero",
 ]
 
 mcprimbranches = [
     "rec.mc.nu.prim.genE",
     "rec.mc.nu.prim.genT",
+    "rec.mc.nu.prim.G4ID",
     "rec.mc.nu.prim.length",
     "rec.mc.nu.prim.pdg",
     "rec.mc.nu.prim.genp.x",
@@ -344,6 +354,7 @@ mcprimbranches = [
     "rec.mc.nu.prim.end.x", "rec.mc.nu.prim.end.y", "rec.mc.nu.prim.end.z",
     "rec.mc.nu.prim.interaction_id", "rec.mc.nu.prim.crosses_tpc", "rec.mc.nu.prim.contained",
 ]
+
 
 mcprimvisEbranches = [
     "rec.mc.nu.prim.plane.0.2.visE", "rec.mc.nu.prim.plane.1.2.visE"
@@ -869,3 +880,258 @@ spinetpart_moduleids_branches = [
 spinetpart_originchildrenid_branches = [
     spinetpart + "orig_children_id"             # Original ID of the children particles.
 ]
+
+blipbranches = [
+    "rec.blips.cryostat",
+    "rec.blips.TPC",
+    "rec.blips.dX",
+    "rec.blips.dYZ",
+    "rec.blips.energy",
+    "rec.blips.energyESTAR",
+    "rec.blips.energyPSTAR",
+    "rec.blips.inCylinder",
+    "rec.blips.isValid",
+    "rec.blips.maxWireSpan",
+    "rec.blips.nPlanes",
+    "rec.blips.position.x",
+    "rec.blips.position.y",
+    "rec.blips.position.z",
+    "rec.blips.proxTrkDist",
+    "rec.blips.proxTrkID",
+    "rec.blips.sigmaYZ",
+    "rec.blips.time",
+    "rec.blips.proxPrimVtxDist",
+    "rec.blips.proxPrimVtxID",
+    "rec.blips.proxVtxDist",
+    "rec.blips.proxVtxID",
+    "rec.blips.proxNuTrkDist",
+    "rec.blips.proxNuTrkID",
+    "rec.blips.proxNuVtxDist",
+    "rec.blips.proxNuVtxID",
+    "rec.blips.proxNuPFPVtxDist",
+    "rec.blips.proxNuPFPID",
+    "rec.blips.inNuCylinder"
+]
+
+blipclusterbranches = [
+    "rec.blips.clusters.0.ADCs",
+    #"rec.blips.clusters.0.G4IDs",
+    "rec.blips.clusters.0.ID",
+    "rec.blips.clusters.0.RMS",
+    "rec.blips.clusters.0.TPC",
+    "rec.blips.clusters.0.amplitude",
+    "rec.blips.clusters.0.blipID",
+    "rec.blips.clusters.0.centerChan",
+    "rec.blips.clusters.0.centerWire",
+    #"rec.blips.clusters.0.chans",
+    "rec.blips.clusters.0.charge",
+    "rec.blips.clusters.0.cryostat",
+    "rec.blips.clusters.0.deadWireSep",
+    "rec.blips.clusters.0.edepID",
+    "rec.blips.clusters.0.endTime",
+    "rec.blips.clusters.0.endWire",
+    "rec.blips.clusters.0.goodnessOfFit",
+    #"rec.blips.clusters.0.hitIDs",
+    "rec.blips.clusters.0.isMatched",
+    "rec.blips.clusters.0.isTruthMatched",
+    "rec.blips.clusters.0.isValid",
+    "rec.blips.clusters.0.nHits",
+    "rec.blips.clusters.0.nPulseTrainHits",
+    "rec.blips.clusters.0.nWires",
+    "rec.blips.clusters.0.plane",
+    "rec.blips.clusters.0.sigmaCharge",
+    "rec.blips.clusters.0.startTime",
+    "rec.blips.clusters.0.startWire",
+    "rec.blips.clusters.0.time",
+    "rec.blips.clusters.0.timespan",
+    #"rec.blips.clusters.0.wires",
+    "rec.blips.clusters.1.ADCs",
+    #"rec.blips.clusters.1.G4IDs",
+    "rec.blips.clusters.1.ID",
+    "rec.blips.clusters.1.RMS",
+    "rec.blips.clusters.1.TPC",
+    "rec.blips.clusters.1.amplitude",
+    "rec.blips.clusters.1.blipID",
+    "rec.blips.clusters.1.centerChan",
+    "rec.blips.clusters.1.centerWire",
+    #"rec.blips.clusters.1.chans",
+    "rec.blips.clusters.1.charge",
+    "rec.blips.clusters.1.cryostat",
+    "rec.blips.clusters.1.deadWireSep",
+    "rec.blips.clusters.1.edepID",
+    "rec.blips.clusters.1.endTime",
+    "rec.blips.clusters.1.endWire",
+    "rec.blips.clusters.1.goodnessOfFit",
+    #"rec.blips.clusters.1.hitIDs",
+    "rec.blips.clusters.1.isMatched",
+    "rec.blips.clusters.1.isTruthMatched",
+    "rec.blips.clusters.1.isValid",
+    "rec.blips.clusters.1.nHits",
+    "rec.blips.clusters.1.nPulseTrainHits",
+    "rec.blips.clusters.1.nWires",
+    "rec.blips.clusters.1.plane",
+    "rec.blips.clusters.1.sigmaCharge",
+    "rec.blips.clusters.1.startTime",
+    "rec.blips.clusters.1.startWire",
+    "rec.blips.clusters.1.time",
+    "rec.blips.clusters.1.timespan",
+    #"rec.blips.clusters.1.wires",
+    "rec.blips.clusters.2.ADCs",
+    #"rec.blips.clusters.2.G4IDs",
+    "rec.blips.clusters.2.ID",
+    "rec.blips.clusters.2.RMS",
+    "rec.blips.clusters.2.TPC",
+    "rec.blips.clusters.2.amplitude",
+    "rec.blips.clusters.2.blipID",
+    "rec.blips.clusters.2.centerChan",
+    "rec.blips.clusters.2.centerWire",
+    #"rec.blips.clusters.2.chans",
+    "rec.blips.clusters.2.charge",
+    "rec.blips.clusters.2.cryostat",
+    "rec.blips.clusters.2.deadWireSep",
+    "rec.blips.clusters.2.edepID",
+    "rec.blips.clusters.2.endTime",
+    "rec.blips.clusters.2.endWire",
+    "rec.blips.clusters.2.goodnessOfFit",
+    #"rec.blips.clusters.2.hitIDs",
+    "rec.blips.clusters.2.isMatched",
+    "rec.blips.clusters.2.isTruthMatched",
+    "rec.blips.clusters.2.isValid",
+    "rec.blips.clusters.2.nHits",
+    "rec.blips.clusters.2.nPulseTrainHits",
+    "rec.blips.clusters.2.nWires",
+    "rec.blips.clusters.2.plane",
+    "rec.blips.clusters.2.sigmaCharge",
+    "rec.blips.clusters.2.startTime",
+    "rec.blips.clusters.2.startWire",
+    "rec.blips.clusters.2.time",
+    "rec.blips.clusters.2.timespan",
+    #"rec.blips.clusters.2.wires",
+
+]
+
+trueblipbranches = [
+    "rec.blips.truthBlip.ID",
+    "rec.blips.truthBlip.TPC",
+    #"rec.blips.truthBlip.cryostat",
+    "rec.blips.truthBlip.depElectrons",
+    "rec.blips.truthBlip.driftTime",
+    "rec.blips.truthBlip.energy",
+    "rec.blips.truthBlip.leadCharge",
+    "rec.blips.truthBlip.leadG4ID",
+    "rec.blips.truthBlip.leadG4Index",
+    "rec.blips.truthBlip.leadG4PDG",
+    "rec.blips.truthBlip.numElectrons",
+    "rec.blips.truthBlip.position.x",
+    "rec.blips.truthBlip.position.y",
+    "rec.blips.truthBlip.position.z",
+    "rec.blips.truthBlip.time"
+]
+
+
+
+## Branches for stub objects
+
+stub_branch = "rec.slc.reco.stub."
+
+stub_branches = [
+    stub_branch + b for b in [
+        "length",                               # Length of the stub.
+        "totarraysize",                         # Total array size of the stub.
+        "efield_end",                           # Electric field at the end of the stub.
+        "efield_vtx",                           # Electric field at the vertex of the stub.
+        "end.x",                                # X coordinate of the end point of the stub.
+        "end.y",                                # Y coordinate of the end point of the stub.
+        "end.z",                                # Z coordinate of the end point of the stub.
+        "pfpid",                                # Particle flow PID associated with the stub.
+        "planes.length",                        # Length of the planes array in the stub.
+        "planes.totarraysize",                  # Total array size of the planes in the stub.
+    ]   
+]
+
+stub_plane_branches = [
+    stub_branch + "planes." + planeId + b for planeId in ["0.", "1.", "2."] for b in [
+        "hits.length",                          # Length of the hits array in the plane.
+        "hits.totarraysize",                    # Total array size of the hits in the plane.
+        "hits.charge",                          # Charge of the hit.
+        "hits.ontrack",                         # Whether the hit is on track.
+        "hits.wire",                            # Wire number of the hit.
+        "p",                                    # Momentum associated with the plane.
+        "pitch",                                # Pitch associated with the plane.
+        "trkpitch",                             # Track pitch associated with the plane.
+        "vtx_w",                                # Vertex wire associated with the plane.
+    ]
+]
+
+stub_truth_branches = [
+    stub_branch + "truth." + b for b in [
+        "bestmatch.G4ID",                       # Geant4 ID of the best match.
+        "bestmatch.energy",                     # Energy of the best match.
+        "bestmatch.energy_completeness",        # Energy completeness of the best match.
+        "bestmatch.energy_purity",              # Energy purity of the best match.
+        "bestmatch.hit_completeness",           # Hit completeness of the best match.
+        "bestmatch.hit_purity",                 # Hit purity of the best match.
+        "eff",                                  # Efficiency of the truth matching.
+        "eff_cryo",                             # Efficiency of the truth matching in the cryostat.
+        "matches.length",                       # Length of the matches array in the truth.
+        "matches.totarraysize",                 # Total array size of the matches in the truth.
+        "matches.G4ID",                         # Geant4 ID of the matches.
+        "matches.energy",                       # Energy of the matches.
+        "matches.energy_completeness",          # Energy completeness of the matches.
+        "matches.energy_purity",                # Energy purity of the matches.
+        "matches.hit_completeness",             # Hit completeness of the matches.
+        "matches.hit_purity",                   # Hit purity of the matches.
+        "nmatches",                             # Number of matches in the truth.
+        "p.G4ID",                               # Geant4 ID of the particle.
+        "p.cont_tpc",                           # Whether the particle is contained in the TPC.
+        "p.contained",                          # Whether the particle is contained.
+        "p.crosses_tpc",                        # Whether the particle crosses the TPC.
+        "p.cryostat",                           # Cryostat of the particle.
+        "p.daughters.length",                   # Length of the daughters array of the particle.
+        "p.daughters.totarraysize",             # Total array size of the daughters of
+        "p.daughters",                          # Daughters of the particle.
+        "p.end.x",                              # X coordinate of the end point of the particle.
+        "p.end.y",                              # Y coordinate of the end point of the particle.
+        "p.end.z",                              # Z coordinate of the end point of the particle.
+        "p.endE",                               # Energy at the end point of the particle.
+        "p.endT",                               # Time at the end point of the particle.
+        "p.end_process",                        # Process at the end point of the particle.
+        "p.endp.x",                             # X coordinate of the end momentum of the particle.
+        "p.endp.y",                             # Y coordinate of the end momentum of the particle.
+        "p.endp.z",                             # Z coordinate of the end momentum of the particle.
+        "p.gen.x",                              # X coordinate of the generated point of the particle.
+        "p.gen.y",                              # Y coordinate of the generated point of the particle.
+        "p.gen.z",                              # Z coordinate of the generated point of the particle.
+        "p.genE",                               # Energy at the generated point of the particle.
+        "p.genT",                               # Time at the generated point of the particle.
+        "p.generator",                          # Generator of the particle.
+        "p.genp.x",                             # X coordinate of the generated momentum of the particle.
+        "p.genp.y",                             # Y coordinate of the generated momentum of the particle.
+        "p.genp.z",                             # Z coordinate of the generated momentum of the particle.
+        "p.pstatus",                            # Status of the particle.
+        "p.interaction_id",                     # Interaction ID of the particle.
+        "p.length",                             # Length of the particle.
+        "p.parent",                             # Parent of the particle.
+        "p.pdg",                                # PDG code of the particle.
+        "p.plane.0.2.nhit",                          # Number of hits in plane 0 of the particle.
+        "p.plane.0.2.visE",                          # Visible energy in plane
+        "p.plane.1.2.nhit",                          # Number of hits in plane 1 of the particle.
+        "p.plane.1.2.visE",                          # Visible energy in plane
+        "p.start.x",                            # X coordinate of the start point of the particle.
+        "p.start.y",                            # Y coordinate of the start point of the particle.
+        "p.start.z",                            # Z coordinate of the start point of the particle.
+        "p.startE",                             # Energy at the start point of the particle.
+        "p.startT",                             # Time at the start point of the particle.
+        "p.start_process",                      # Process at the start point of the particle.
+        "p.startp.x",                           # X coordinate of the start momentum of the particle.
+        "p.startp.y",                           # Y coordinate of the start momentum of the particle.
+        "p.startp.z",                           # Z coordinate of the start momentum of the particle.
+        "p.wallin",                             # Whether the particle enters the wall.
+        "p.wallout",                            # Whether the particle exits the wall.
+        "p.pur",                                # Purity of the particle.
+        "p.visEInTrk",                          # Visible energy in the track of the particle
+        "vtx.x"                                 # X coordinate of the vertex of the particle.
+    ]
+]
+
+
