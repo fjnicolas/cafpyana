@@ -100,7 +100,7 @@ def make_sbndtimingdf(f):
     return  loadbranches(f["recTree"], sbndtimingbranches).rec
     
 # TODO: zip the nuniv configs
-def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nuniv=100, wgt_types=["bnb","genie","g4"], slim=False, genie_systematics=None):
+def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nuniv=100, wgt_types=["bnb","genie","g4"], slim=False, genie_systematics=None, bnb_systematics=None, g4_systematics=None, save_primaries=False):
     # ----- sbnd or icarus? -----
     det = loadbranches(f["recTree"], ["rec.hdr.det"]).rec.hdr.det
     if (1 == det.unique()):
@@ -108,7 +108,7 @@ def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nun
     else:
         det = "ICARUS"
 
-    mcdf = make_mcdf(f, savePrimariesG4IDs=True)
+    mcdf = make_mcdf(f, save_mcnu_primaries=save_primaries)
     mcdf["ind"] = mcdf.index.get_level_values(1)
     if include_weights:
         if len(wgt_types) == 0:
@@ -116,13 +116,13 @@ def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nun
         else:
             df_list = []
             if "bnb" in wgt_types:
-                bnbwgtdf = bnbsyst.bnbsyst(f, mcdf.ind, multisim_nuniv=multisim_nuniv, slim=slim)
+                bnbwgtdf = bnbsyst.bnbsyst(f, mcdf.ind, multisim_nuniv=multisim_nuniv, slim=slim, systematics=bnb_systematics)
                 df_list.append(bnbwgtdf)
             if "genie" in wgt_types:
                 geniewgtdf = geniesyst.geniesyst(f, mcdf.ind, multisim_nuniv=genie_multisim_nuniv, slim=slim, systematics=genie_systematics)
                 df_list.append(geniewgtdf)
             if "g4" in wgt_types:
-                g4wgtdf = g4syst.g4syst(f, mcdf.ind)
+                g4wgtdf = g4syst.g4syst(f, mcdf.ind, systematics=g4_systematics)
                 df_list.append(g4wgtdf)
 
             wgtdf = pd.concat(df_list, axis=1)
@@ -379,7 +379,7 @@ def make_slcdf(f):
 
     return slcdf
 
-def make_mcdf(f, branches=mcbranches, primbranches=mcprimbranches, savePrimariesG4IDs=False):
+def make_mcdf(f, branches=mcbranches, primbranches=mcprimbranches, save_mcnu_primaries=False):
     # load the df
     mcdf = loadbranches(f["recTree"], branches)
     while mcdf.columns.nlevels > 2:
@@ -449,7 +449,7 @@ def make_mcdf(f, branches=mcbranches, primbranches=mcprimbranches, savePrimaries
     ## Primaries dataframe has multiple levels per mcnu (each of the primary particles)
     ## Add all the primary sub-dataframes to the mcnu dataframe
     ## in the style of ('prim', 'genE', '') , ('prim', 'pdg', ''), etc.
-    if savePrimariesG4IDs:
+    if save_mcnu_primaries:
         mcprimdf_toadd = mcprimdf.copy()
         ## Keep only the relevant columns for the primaries dataframe
         mcprimdf_toadd = mcprimdf_toadd[['pdg', 'genE', 'G4ID']]
