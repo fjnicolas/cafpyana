@@ -175,7 +175,7 @@ def make_blipdf_mcnutruthmatched(f):
 
     # Load true_particles and MCNu for matching
     true_particles_df = make_alltrueparticlesdf(f)
-    mcnu_df = make_mcnudf(f)
+    mcnu_df = make_mcnudf(f, save_primaries=True)
 
 
     # Perform blip-truth matching
