@@ -14,7 +14,7 @@ def make_slcdf_withlight(f):
 
     return slcdf
 
-def make_pandora_df_withlight(f, trkScoreCut=False, trkDistCut=50., cutClearCosmic=False, requireFiducial=False, updatecalo=False, **trkArgs):
+def make_pandora_df_withlight(f, trkScoreCut=False, trkDistCut=50., cutClearCosmic=False, requireFiducial=False, updatecalo=False, addCaloVariations=False, **trkArgs):
     # load
     trkdf = make_trkdf(f, trkScoreCut, **trkArgs)
 
@@ -49,6 +49,36 @@ def make_pandora_df_withlight(f, trkScoreCut=False, trkDistCut=50., cutClearCosm
                 trkdf[this_ndof_col] = this_chi2_ndof
                 trkdf[this_chi2_col] = trkdf[this_chi2_col].fillna(0.)
                 trkdf[this_ndof_col] = trkdf[this_ndof_col].fillna(0)
+
+    if (addCaloVariations):
+        # check detector
+        det = loadbranches(f["recTree"], ["rec.hdr.det"]).rec.hdr.det
+        if (1 == det.unique()):
+            det = "SBND"
+        else:
+            det = "ICARUS"
+        #check ismc
+        hdrdf = make_mchdrdf(f)
+        ismc = hdrdf.ismc.iloc[0]
+        
+        chi2_pids = []
+        for plane in range(0, 3):
+            trkhitdf = make_trkhitdf(f, plane)
+
+            for var_name, calo_var_params in chi2pid.CALO_VARIATIONS.items():
+                dedx_redo = chi2pid.dedx(trkhitdf, gain=det, calibrate=det, plane=plane, isMC=ismc, new_calo_params=calo_var_params)
+                dedx_bias = (dedx_redo - trkhitdf.dedx) / trkhitdf.dedx
+                trkhitdf["dedx_systvar"] = dedx_redo
+                for par in ['muon', 'proton']:
+                    this_chi2_new, this_chi2_ndof = chi2pid.chi2par(trkhitdf, dedxname="dedx_systvar", par=par)
+                    this_chi2_col = ('pfp', 'trk', 'chi2pid', 'I' + str(plane), 'chi2_' + par + '_' + var_name, '')
+                    this_ndof_col = ('pfp', 'trk', 'chi2pid', 'I' + str(plane), 'ndof_' + par + '_' + var_name, '')
+
+                    trkdf[this_chi2_col] = this_chi2_new
+                    trkdf[this_ndof_col] = this_chi2_ndof
+                    trkdf[this_chi2_col] = trkdf[this_chi2_col].fillna(0.)
+                    trkdf[this_ndof_col] = trkdf[this_ndof_col].fillna(0)
+
 
     slcdf = make_slcdf_withlight(f)
 
@@ -102,5 +132,5 @@ def make_pandora_df_withlight(f, trkScoreCut=False, trkDistCut=50., cutClearCosm
     return slcdf
 
 def make_pandora_df_nc1p(f):
-    pandoradf = make_pandora_df_withlight(f, cutClearCosmic=True, updatecalo=True)
+    pandoradf = make_pandora_df_withlight(f, cutClearCosmic=True, updatecalo=True, addCaloVariations=True)
     return pandoradf
