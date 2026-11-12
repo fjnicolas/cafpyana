@@ -3,12 +3,13 @@ import numpy as np
 import pandas as pd
 import awkward as ak
 
-def getsyst(f, systematics, nuind, multisim_nuniv=100, slim=False, slimname="slim"):
+def getsyst(f, systematics, nuind, multisim_nuniv=100, slim=False, slimname="slim", slim_systs2save=None):
+
     if "globalTree" not in f:
         return pd.DataFrame(index=nuind.index)
 
     nuidx = pd.MultiIndex.from_arrays([nuind.index.get_level_values(0), nuind])
-
+    
     if slim:
         # one column to save them all
         cols = pd.MultiIndex.from_product(
@@ -49,11 +50,14 @@ def getsyst(f, systematics, nuind, multisim_nuniv=100, slim=False, slimname="sli
 
             if slim:
                 for i in range(multisim_nuniv):
-                    seed_input = s + str(i) + str(id(f))
+                    seed_input = s + str(i)# + str(id(f))
                     np.random.seed(hash(seed_input) % (2**32))
                     wgt = 1 + (s_morph - 1) * 2 * np.abs(np.random.normal(0, 1)) # std -> unc.
                     wgt = np.maximum(wgt, 0)
                     systs_slim[(slimname, f"univ_{i}")] = systs_slim[(slimname, f"univ_{i}")].values * wgt
+
+                if slim_systs2save is not None and s in slim_systs2save:
+                    this_systs.append(s_morph)
 
             else:
                 this_systs.append(s_morph)
@@ -67,14 +71,21 @@ def getsyst(f, systematics, nuind, multisim_nuniv=100, slim=False, slimname="sli
                 s_ms = wgts[wgts.isyst == isyst].wgt.groupby(level=[0,1]).nth(2*isigma+1)
                 s_ms.name = (s, "ms%i" % (isigma+1))
 
+
                 if slim and isigma == 0: # use ps1
+
                     for i in range(multisim_nuniv):
-                        seed_input = s + str(i) + str(id(f))
+                        seed_input = s + str(i)# + str(id(f))
                         np.random.seed(hash(seed_input) % (2**32))
                         wgt = 1 + (s_ps - 1) * np.random.normal(0, 1)
                         wgt = wgt.reset_index(level=2, drop=True)  # Drop the 'iwgt' level to match systs_slim index
                         wgt = np.maximum(wgt, 0)
                         systs_slim[(slimname, f"univ_{i}")] = systs_slim[(slimname, f"univ_{i}")].values * wgt
+
+                if slim:
+                    if slim_systs2save is not None and s in slim_systs2save:
+                        this_systs.append(s_ps.droplevel(2))
+                        this_systs.append(s_ms.droplevel(2))
                 else:
                     this_systs.append(s_ps.droplevel(2))
                     this_systs.append(s_ms.droplevel(2))
@@ -83,10 +94,12 @@ def getsyst(f, systematics, nuind, multisim_nuniv=100, slim=False, slimname="sli
             if nwgt % 2 != 0:
                 s_cv = wgts[wgts.isyst == isyst].wgt.groupby(level=[0,1]).nth(nwgt-1)
                 s_cv.name = (s, "cv")
-                this_systs.append(s_cv.droplevel(2))
+                if not slim or (slim and slim_systs2save is not None and s in slim_systs2save):
+                    this_systs.append(s_cv.droplevel(2))
             # otherwise, assume it's one
             else:
-                this_systs.append(pd.Series(1, index=this_systs[-1].index, name=(s, "cv")))
+                if not slim or (slim and slim_systs2save is not None and s in slim_systs2save):
+                    this_systs.append(pd.Series(1, index=this_systs[-1].index, name=(s, "cv")))
 
         elif wgt_types[isyst] == 0: # multisim
             this_wgts = wgts[wgts.isyst == isyst].wgt.groupby(level=[0,1]).head(multisim_nuniv) # limit to 250 universes
@@ -98,8 +111,12 @@ def getsyst(f, systematics, nuind, multisim_nuniv=100, slim=False, slimname="sli
                 for i in range(multisim_nuniv):
                     systs_slim[(slimname, f"univ_{i}")] = systs_slim[(slimname, f"univ_{i}")].values * this_wgts[(s, f"univ_{i}")]
 
-            for c in this_wgts.columns:
-                this_systs.append(this_wgts[c])
+                if slim_systs2save is not None and s in slim_systs2save:
+                    for c in this_wgts.columns:
+                        this_systs.append(this_wgts[c])
+            else:
+                for c in this_wgts.columns:
+                    this_systs.append(this_wgts[c])
 
         else:
             raise Exception("Cannot decode systematic uncertainty: %s" % s)
@@ -111,6 +128,17 @@ def getsyst(f, systematics, nuind, multisim_nuniv=100, slim=False, slimname="sli
         s_idx = systs_slim.index.get_indexer(nuidx)
         systs_slim.loc[s_idx < 0, :] = 1.
         systs_slim.index = nuind.index
+
+        ## Also add the systematic uncertainties that were saved in slim_systs2save
+        if slim_systs2save is not None and len(systs) > 0:
+            saved = pd.concat(systs, axis=1)
+            saved.columns = pd.MultiIndex.from_tuples(saved.columns) if not isinstance(saved.columns, pd.MultiIndex) else saved.columns
+            s_idx = saved.index.get_indexer(nuidx)
+            saved_match = saved.iloc[s_idx]
+            saved_match.loc[s_idx < 0, :] = 1.
+            saved_match.index = nuind.index
+            systs_slim = pd.concat([systs_slim, saved_match], axis=1)
+
         return systs_slim
 
     else:
