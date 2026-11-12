@@ -142,14 +142,17 @@ ar23p_genie_systematics = [
 
 #regen_systematics = ar23p_genie_systematics + regen_systematics
 
-def geniesyst(f, nuind, multisim_nuniv=100, slim=False, systematics=None):
+def geniesyst(f, nuind, multisim_nuniv=100, slim=False, systematics=None, slim_systs2save=None):
     if systematics is None:
         systematics = regen_systematics
 
-    geniewgtdf = getsyst.getsyst(f, systematics, nuind, multisim_nuniv=multisim_nuniv, slim=slim, slimname="GENIE")
+    geniewgtdf = getsyst.getsyst(f, systematics, nuind, multisim_nuniv=multisim_nuniv, slim=slim, slimname="GENIE", slim_systs2save=slim_systs2save)
 
     if slim:  # keep only the multiplied "GENIE.univ_" columns
         genie_cols = [c for c in geniewgtdf.columns if c[0] == "GENIE"]
+        # Also keep the columns specified in slim_systs2save
+        if slim_systs2save is not None:
+            genie_cols += [c for c in geniewgtdf.columns if c[0] in slim_systs2save]
         geniewgtdf = geniewgtdf[genie_cols]
         
 

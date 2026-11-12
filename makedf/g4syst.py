@@ -6,8 +6,8 @@ g4_systematics = [
     "reinteractions_proton_Geant4"
 ]
 
-def g4syst(f, nuind, systematics=None):
+def g4syst(f, nuind, systematics=None, slim=False, slim_systs2save=None):
     if systematics is None:
         systematics = g4_systematics
-    return getsyst.getsyst(f, systematics, nuind)
+    return getsyst.getsyst(f, systematics, nuind, slim=slim, slimname="G4Reinteraction", slim_systs2save=slim_systs2save)
 

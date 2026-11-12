@@ -100,7 +100,7 @@ def make_sbndtimingdf(f):
     return  loadbranches(f["recTree"], sbndtimingbranches).rec
     
 # TODO: zip the nuniv configs
-def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nuniv=100, wgt_types=["bnb","genie","g4"], slim=False, genie_systematics=None, bnb_systematics=None, g4_systematics=None, save_primaries=False):
+def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nuniv=100, wgt_types=["bnb","genie","g4"], slim=False, genie_systematics=None, bnb_systematics=None, g4_systematics=None, save_primaries=False, slim_systs2save=None):
     # ----- sbnd or icarus? -----
     det = loadbranches(f["recTree"], ["rec.hdr.det"]).rec.hdr.det
     if (1 == det.unique()):
@@ -116,16 +116,21 @@ def make_mcnudf(f, include_weights=False, multisim_nuniv=100, genie_multisim_nun
         else:
             df_list = []
             if "bnb" in wgt_types:
-                bnbwgtdf = bnbsyst.bnbsyst(f, mcdf.ind, multisim_nuniv=multisim_nuniv, slim=slim, systematics=bnb_systematics)
+                # look if bnb is in dictionary
+                bnb_slim_systs2save = slim_systs2save["Flux"] if slim_systs2save is not None and "Flux" in slim_systs2save else None
+                bnbwgtdf = bnbsyst.bnbsyst(f, mcdf.ind, systematics=bnb_systematics, multisim_nuniv=multisim_nuniv, slim=slim, slim_systs2save=bnb_slim_systs2save)
                 df_list.append(bnbwgtdf)
             if "genie" in wgt_types:
-                geniewgtdf = geniesyst.geniesyst(f, mcdf.ind, multisim_nuniv=genie_multisim_nuniv, slim=slim, systematics=genie_systematics)
+                genie_slim_systs2save = slim_systs2save["GENIE"] if slim_systs2save is not None and "GENIE" in slim_systs2save else None
+                geniewgtdf = geniesyst.geniesyst(f, mcdf.ind, systematics=genie_systematics, multisim_nuniv=genie_multisim_nuniv, slim=slim, slim_systs2save=genie_slim_systs2save)
                 df_list.append(geniewgtdf)
             if "g4" in wgt_types:
-                g4wgtdf = g4syst.g4syst(f, mcdf.ind, systematics=g4_systematics)
+                g4_slim_systs2save = slim_systs2save["G4"] if slim_systs2save is not None and "G4" in slim_systs2save else None
+                g4wgtdf = g4syst.g4syst(f, mcdf.ind, systematics=g4_systematics, slim=slim, slim_systs2save=g4_slim_systs2save)
                 df_list.append(g4wgtdf)
-
+        
             wgtdf = pd.concat(df_list, axis=1)
+            ## Check duplicated columns
             mcdf = multicol_concat(mcdf, wgtdf)
 
     return mcdf
