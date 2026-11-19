@@ -120,12 +120,14 @@ def make_pandora_df_withlight(f, trkScoreCut=False, trkDistCut=50., cutClearCosm
     sum_integ_3cm = (hittrk_matched_df_3cm.pfp.trk.hit.integral).groupby(level=[0,1]).sum()
     sum_integ_2cm = (hittrk_matched_df_2cm.pfp.trk.hit.integral).groupby(level=[0,1]).sum()
     sum_integ_1cm = (hittrk_matched_df_1cm.pfp.trk.hit.integral).groupby(level=[0,1]).sum()
+    sum_integ_allhits = (hittrk_matched_df.pfp.trk.hit.integral).groupby(level=[0,1]).sum()
 
     #print(sum_integ_4cm)
     slcdf['sum_integ_4cm'] = sum_integ_4cm
     slcdf['sum_integ_3cm'] = sum_integ_3cm
     slcdf['sum_integ_2cm'] = sum_integ_2cm
     slcdf['sum_integ_1cm'] = sum_integ_1cm
+    slcdf['sum_integ_allhits'] = sum_integ_allhits
 
 
     #print(slcdf.pfp.trk.chi2pid.head(50))

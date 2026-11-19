@@ -304,10 +304,12 @@ barycenterFMbranches = [
 ]
 
 correctedflashbranches = [
-    "rec.slc.correctedOpFlash.OpFlashT0",
     "rec.slc.correctedOpFlash.NuToFLight",
     "rec.slc.correctedOpFlash.NuToFCharge",
+    "rec.slc.correctedOpFlash.OpFlashT0",
     "rec.slc.correctedOpFlash.OpFlashT0Corrected",
+    "rec.slc.correctedOpFlash.ParticlePropagationTime",
+    "rec.slc.correctedOpFlash.PhotonPropagationTime",
 ]
 
 slcbrancheswithlight = slcbranches + barycenterFMbranches + correctedflashbranches

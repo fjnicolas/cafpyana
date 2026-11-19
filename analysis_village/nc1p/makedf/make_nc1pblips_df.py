@@ -151,7 +151,7 @@ def add_blip_mcnu_truthmatching(blips_df, true_particles_df, mcnu_df):
     return result.set_index(blips_df.index.names)
 
 
-def make_blipdf_mcnutruthmatched(f):
+def make_blipdf_mcnutruthmatched(f, blip_charge_size_cut=0.):
     
     blipinfodf = loadbranches(f["recTree"], blipbranches)
     trueblipinfodf = loadbranches(f["recTree"], trueblipbranches)
@@ -161,11 +161,14 @@ def make_blipdf_mcnutruthmatched(f):
     
 
     # Add derived blip columns
-
     # Add blip size
     fullblipdf = add_blip_calorimetry_variables(fullblipdf)
     # Rewrite energyPSTAR using spline interpolation from charge
     fullblipdf = rewrite_blip_energyPSTAR(fullblipdf)
+
+    ## Cut on blip charge/size ratio
+    if blip_charge_size_cut > 0.:
+        fullblipdf = fullblipdf[fullblipdf[BLIPS_CHARGE_SIZE_RATIO_COL_NAME] > blip_charge_size_cut]
 
     # Add CRT veto branches
     crt_veto_df = make_crtvetodf(f)
@@ -182,4 +185,7 @@ def make_blipdf_mcnutruthmatched(f):
     fullblipdf = add_blip_mcnu_truthmatching(fullblipdf, true_particles_df, mcnu_df)
     
     return fullblipdf 
-    
+
+def make_blipdf_nc1p(f, blip_charge_size_cut=50000):
+    blipdf = make_blipdf_mcnutruthmatched(f, blip_charge_size_cut=blip_charge_size_cut)
+    return blipdf

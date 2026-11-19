@@ -47,6 +47,17 @@ CALO_VARIATIONS = {
     "R_m": {**SBND_CALO_PARAMS, "R_emb": [1.25-0.02, 1.25-0.02]},
 }
 
+def kinetic_energy(hitdf, dedxname="dedx"):
+    """
+    Estimate kinetic energy by integrating dE/dx over path length.
+    KE = sum(dEdx * pitch) for hits passing the same validity cuts as chi2.
+    """
+    ke_goodhits_mask = (hitdf[dedxname] < 1000.)
+    #ke_goodhits_mask = ~hitdf.firsthit && ~hitdf.lasthit  (hitdf[dedxname] < 1000.)
+
+    ke_per_hit = hitdf[dedxname] * hitdf["pitch"]
+    ke_group = ke_per_hit[ke_goodhits_mask].groupby(level=list(range(hitdf.index.nlevels - 1)))
+    return ke_group.sum()
 
 def chi2(hitdf, exprr, expdedx, experr, dedxname="dedx"):
     dedx_exp = pd.cut(hitdf.rr, exprr, labels=expdedx).astype(float)

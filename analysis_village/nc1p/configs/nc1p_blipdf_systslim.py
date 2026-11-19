@@ -4,5 +4,5 @@ from analysis_village.nc1p.makedf.make_nc1pblips_df import *
 from analysis_village.nc1p.makedf.make_truth_nc1pdf import *
 
 
-DFS = [make_pandora_df_nc1p, make_hdrdf, make_potdf_bnb, make_sbndtimingdf, make_blipdf_mcnutruthmatched, make_opflashdf, make_nc1p_nuslimwgtdf]
-NAMES = ["evt", "hdr", "pot", "timing", "blips", "opflashes", "mcnu"]
+DFS = [make_pandora_df_nc1p, make_hdrdf, make_potdf_bnb, make_blipdf_nc1p, make_opflashdf, make_nc1p_nuslimwgtdf]
+NAMES = ["evt", "hdr", "pot", "blips", "opflashes", "mcnu"]

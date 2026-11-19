@@ -23,3 +23,5 @@ envs/util-linux-2.39.3/
 *__init__.py
 *jupyterhub.sqlite
 jupyterhub_cookie_secret
+._*.py
+.ipynb*
